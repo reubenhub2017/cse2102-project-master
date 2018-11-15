@@ -10,6 +10,8 @@ import java.io.*;
 import java.util.*;
 import edu.uconn.cse2102.project.common.Hospital;
 import edu.uconn.cse2102.project.common.Comments;
+
+
 import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
@@ -33,7 +35,7 @@ public class Main extends JFrame implements ActionListener
         String citizen;
         String citizen_ss;
         String citizen_comment;
-        ArrayList<String> citizendata = new ArrayList<String>(3);
+        ArrayList<String> citizendata = new ArrayList<String>(4);
         
         
        
@@ -82,7 +84,7 @@ public class Main extends JFrame implements ActionListener
         JPanel nav_container = new JPanel(new GridBagLayout());
         JPanel container_l = new  JPanel (new GridBagLayout());
         JPanel survey_panel = new JPanel(new GridBagLayout());
-        JPanel comment_panel = new JPanel();
+        
         
         
         
@@ -96,7 +98,7 @@ public class Main extends JFrame implements ActionListener
         JButton Submit_survey = new JButton("Submit");
         
         JButton Submit_legislator = new JButton("Are you a legislator");
-    
+        JButton back_btn = new JButton("Back");
         
         //Buttons for the Legislator 
         JButton Comment_Section_btn = new JButton("Comments");
@@ -124,6 +126,8 @@ public class Main extends JFrame implements ActionListener
        //Getting the time now 
        DateTimeFormatter dtf = DateTimeFormatter.ofPattern("yyyy/MM/dd HH:mm:ss");  
        LocalDateTime now = LocalDateTime.now();  
+       
+       public String String_Array_Sample = "../common/build/resources/main/comments.csv";
           
 
                 
@@ -217,7 +221,10 @@ public void legislator_start(){
       constraints.gridy = 2;
       panel_l.add(Submit_l, constraints);
       
-      Submit_l.addActionListener(this);
+      constraints.gridx = 0;
+      constraints.gridy = 3;
+      panel_l.add(back_btn, constraints);
+      back_btn.addActionListener(this);
       
       add(panel_l);
       setLocationRelativeTo(null);
@@ -273,6 +280,39 @@ public void make_comment_section() {
       
    
     }
+
+public void write(){
+
+       
+            List<Comments> csvComments = new ArrayList<Comments>();
+            System.out.print(csvComments);
+            citizen_comment = textbox_c.getText();
+            
+            try (
+                Writer writer = Files.newBufferedWriter(Paths.get(String_Array_Sample));
+                
+                CSVWriter csvWriter = new CSVWriter(writer, CSVWriter.DEFAULT_SEPARATOR,
+                CSVWriter.NO_QUOTE_CHARACTER,
+                    CSVWriter.DEFAULT_ESCAPE_CHARACTER,
+                    CSVWriter.DEFAULT_LINE_END);
+                ){
+                String COMMA_DELIMITER = ",";
+            
+            String NEW_LINE_SEPARATOR = "\n";
+            String[] FILE_HEADER = {"ID","Full_Name","SS","Comment","Time"};
+            csvWriter.writeNext(FILE_HEADER);
+            csvWriter.writeNext(new String[]{"test2","test2","test2","test2","test2"});
+            
+            
+            } catch (IOException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+    
+           
+            
+            System.out.println("Done");
+
+}         
 //Button actions Performed 
 public void actionPerformed(ActionEvent e){
           if(e.getSource() == Submit_l){
@@ -288,64 +328,33 @@ public void actionPerformed(ActionEvent e){
               System.out.print("Fail!");     
           }
           }
+          if(e.getSource() == back_btn){
+              frame2.setVisible(false);
+              user_start();
+          
+          
+          
+          }
           if(e.getSource() == Submit){
               citizen = FullName.getText();
               citizen_ss = Social_Security.getText();
-              
-              
-              
-              
-              
+                
               System.out.print("Success!");
              
               make_comment_section();
               
               frame.setVisible(false);
           }
-          if(e.getSource() == Submit_make_comment){
-              citizen_comment = textbox_c.getText();
-              
-              
-              List<Comments> csvComments = new ArrayList<Comments>();
-           System.out.print(csvComments);
-    
-    String COMMA_DELIMITER = ",";
-    String NEW_LINE_SEPARATOR = "\n";
-    String FILE_HEADER = "ID,Full_Name,SS,Comment,Time";
-    try {
-                 csvComments.add(new Comments("test", "test","test", "test","test"));
-                 csvComments.add(new Comments("002", citizen,citizen_ss,citizen, dtf.format(now)));
-                 FileWriter fileWriter = new FileWriter(String_Array_Sample);
-                 fileWriter.append(FILE_HEADER);
-                 
-                 for(Comments c: csvComments){
-                    fileWriter.append(NEW_LINE_SEPARATOR);
-                    fileWriter.append(c.getId());
-                    fileWriter.append(COMMA_DELIMITER);
-                    fileWriter.append(c.getFull_Name());
-                    fileWriter.append(COMMA_DELIMITER);
-                    fileWriter.append(c.getSS());
-                    fileWriter.append(COMMA_DELIMITER);
-                    fileWriter.append(c.getComment());
-                    fileWriter.append(COMMA_DELIMITER);
-                    fileWriter.append(c.getTime());
-                    fileWriter.append(COMMA_DELIMITER);
-                    
-                 }
-                    fileWriter.flush();
-                    fileWriter.close();
-                    System.out.println("Done");
-                 
-                
-            } catch (IOException ex) {
-                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
-            }
-              
+          if(e.getSource() == Submit_make_comment){   
           System.out.print("Success");
           
           thank_you_page();
-          
+          write();
           frame4.setVisible(false);
+          
+          
+          
+          
           }
           
           if(e.getSource() == Loggout){
@@ -355,6 +364,7 @@ public void actionPerformed(ActionEvent e){
           }
           if(e.getSource() == comments){
           start_comment_section();
+          frame6.setVisible(false);
           
           }
           if(e.getSource() == Submit_legislator){
@@ -367,40 +377,47 @@ public void actionPerformed(ActionEvent e){
 //List of comments 
 public JPanel listofComments(){
     List<Comments> csvComments = Comments.load();
-    
+    System.out.print(csvComments);
     
     for(Comments comm: csvComments){
-        
        
-        JLabel id = new JLabel("Id: " +  "\n" + comm.getId());
-        comment_data.append("Id: " +  "\n" + comm.getId()); 
-        System.out.print("Id: " + "\n" +  comm.getId());
-        comment_panel.add(id);
+        JLabel id = new JLabel("Id: " + comm.getId() +  "\n");
+        comment_data.append("Id: "  + comm.getId() +  "\n"); 
+        survey_panel.add(id);
+        System.out.print("Id: "  +  comm.getId() + "\n");
         
-        JLabel name = new JLabel("Name: " +  "\n" + comm.getFull_Name());
-        comment_data.append("Name: \n" + comm.getFull_Name());
-        System.out.print("Full_Name: " + "\n" +  comm. getFull_Name());
-        comment_panel.add(name);
+        //comment_panel.add(id);
+        JLabel name = new JLabel("Full Name: " + comm.getFull_Name() +  "\n");
+        comment_data.append("Full_Name: "  + comm.getFull_Name() +  "\n");
+        survey_panel.add(name);
+        System.out.print("Full_Name: " +  comm.getFull_Name() + "\n");
         
-        JLabel ss = new JLabel("SS:" + "\n" + comm.getSS());
-        comment_data.append("SS: \n" + comm.getSS());
-        System.out.print("SS:" + "\n" + comm.getSS());
-        comment_panel.add(ss);
+       // comment_panel.add(name);
+        JLabel s_s = new JLabel("SS: " + comm.getSS() +  "\n");
+        comment_data.append("SS: "  + comm.getSS() +  "\n");
+        System.out.print("SS:" + comm.getSS() + "\n" );
+        survey_panel.add(s_s);
         
-        JLabel comment = new JLabel("Comment:" + "\n" + comm.getComment());
-        comment_data.append("Comment: \n" + comm.getComment());
-        System.out.print("Comment:" + "\n" + comm.getComment());
-        comment_panel.add(comment);
+        JLabel comment = new JLabel("Comment: " + comm.getComment() +  "\n");
+        comment_data.append("Comment: "  + comm.getComment() +  "\n");
+        System.out.print("Comment:" + comm.getComment() + "\n" );
+        survey_panel.add(comment);
+        //comment_panel.add(comment);
         
-        JLabel time = new JLabel("Time:" + "\n" + comm.getTime());
-        comment_data.append("Time: \n" + comm.getTime());
-        System.out.print("Time:" + "\n" + comm.getTime());
-        comment_panel.add(time);
+        JLabel time = new JLabel("Time: " + comm.getTime() +  "\n");
+        comment_data.append("Time: "  + comm.getTime() +  "\n");
+        System.out.print("Time:" + comm.getTime() + "\n" );
+        survey_panel.add(time);
+        
+        JLabel newLine = new JLabel("\n" + "=================" + "\n");
+        comment_data.append("\n" + "=================" + "\n");
+       // comment_panel.add(time);
         
         
-        
-    }
-return comment_panel;
+            System.out.println("\n" + "=================" + "\n");
+           
+                }
+return survey_panel;
     
     
 
@@ -432,6 +449,8 @@ public JPanel ListOfData(){
             data.append("Experience:  " +  hosp.getExperience() +  "\n");
             System.out.println("Experience: " + hosp.getExperience());
             
+                
+            
             JLabel Mortality = new JLabel("Mortality: " + hosp.getMortality());
             Hospital_data.add(Mortality);
             data.append("Mortality: " + hosp.getMortality() +  "\n");
@@ -450,22 +469,25 @@ public JPanel ListOfData(){
         
     return Hospital_data;
 }
-public void start_comment_section() {
+private void start_comment_section() {
+        frame3.setJMenuBar(menuBar);
+        JPanel panel_c =  listofComments();
+         JScrollPane pane = new JScrollPane(panel_c,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
         
-       
-        JPanel pane = listofComments();
-        frame3.add(pane); 
+        
+        frame3.add(comment_data); 
+        
         frame3.setSize(1024, 1024);
         frame3.setVisible(true);
        
         frame3.setDefaultCloseOperation(EXIT_ON_CLOSE);
     
     }
-public String String_Array_Sample = "../common/build/resources/main/comments.csv";
+
 //Thank you page 
 private void thank_you_page()   {
-            
-           
+         
+
   
         //To change body of generated methods, choose Tools | Templates.
        frame5.setSize(1024, 1024);
@@ -477,21 +499,17 @@ private void thank_you_page()   {
        frame5.setDefaultCloseOperation(EXIT_ON_CLOSE);
        citizendata.add(citizen);
        citizendata.add(citizen_ss);
-       citizendata.add(citizen_comment);
+       citizendata.add(textbox_c.getText());
+       citizendata.add("test");
        System.out.print(citizendata);
-       
-       
-       
-       
-       
-       
-       
+
     }
+
+
 //Run Survey Data, running to get all the input from the CVS This brings to the menu of the homescreen
 private void RunSurveydata_(){
     //Menu 
-       
-       
+ 
        comments.addActionListener(this);
        Loggout.addActionListener(this);
        
@@ -521,7 +539,7 @@ private void RunSurveydata_(){
     Main.setSize(1024, 1024);
     
     // frame6.add(legislator_customization_home_page());
-    JScrollPane pane = new JScrollPane(data ,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+    JScrollPane pane = new JScrollPane(data,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
     frame6.add(pane);
     frame6.setSize(1024, 1024);
     frame6.setBackground(Color.white);
@@ -587,7 +605,9 @@ public void TestCase(
     {
         
      Main test = new Main();
-     test.user_start();
+     test.legislator_start();
+     //test.user_start();
+     //test.start_comment_section();
     }
 
 

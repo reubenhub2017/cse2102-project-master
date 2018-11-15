@@ -11,7 +11,7 @@ import java.util.List;
 
 public class Comments
 {
-    
+
     
     
     
@@ -92,15 +92,15 @@ public class Comments
     public void setTime(String time){
         this.time = time;
     }
-    
-    public Comments(String id, String name, String SS, String comment, String Time){
-        this.id = id;
-        this.name = name;
+    /*
+    public Comments(String identity, String Full_Name, String SS, String Comment, String Time){
+        this.id = identity;
+        this.name = Full_Name;
         this.ss = SS;
         this.time = Time;
-        this.comment = comment;
+        this.comment = Comment;
         
     
-    }
+    }*/
     
 }
