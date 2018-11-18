@@ -4,7 +4,6 @@ package edu.uconn.cse2102.project.role1;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import javax.swing.*;
 import java.io.*;
 import java.util.*;
@@ -12,10 +11,8 @@ import edu.uconn.cse2102.project.common.Hospital;
 import edu.uconn.cse2102.project.common.Comments;
 
 
-import com.opencsv.CSVReader;
 import com.opencsv.CSVWriter;
 
-import static java.awt.SystemColor.menu;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -36,6 +33,7 @@ public class Main extends JFrame implements ActionListener
         String citizen_ss;
         String citizen_comment;
         ArrayList<String> citizendata = new ArrayList<String>(4);
+        ArrayList<JFrame> frames = new ArrayList<JFrame>(4);
         
         
        
@@ -52,11 +50,6 @@ public class Main extends JFrame implements ActionListener
         JTextField FullName = new JTextField(50);
         JTextField Social_Security = new JTextField(50);
         JTextArea textbox_c = new JTextArea(10,10);
-        
-        
-        
-        
-
      
         //Legislator fields
         JLabel Welcome_back = new JLabel("Welcome back legislator!");
@@ -65,12 +58,20 @@ public class Main extends JFrame implements ActionListener
         //Frames
         JFrame frame = new JFrame("Hospital General System ");
         JFrame frame2 = new JFrame("(HGI ADMIN) Welcome Back legislator! ");
-        
-        
+      
         JFrame frame3 = new JFrame("Comment Section");
         JFrame frame4 = new JFrame("Make a comment");
         JFrame frame5 = new JFrame("Thank you page");
+        
+        
+        
         JFrame frame6 = new JFrame("Survey Data from the Public");
+        JFrame frame8 = new JFrame("About HGS");
+        JFrame frame9 = new JFrame("Edit Profile");
+        JFrame frame10 = new JFrame("Change Password");
+        
+        
+        
         
         //Survey frame
         JFrame frame7 = new JFrame("Taking the survey");
@@ -84,10 +85,7 @@ public class Main extends JFrame implements ActionListener
         JPanel nav_container = new JPanel(new GridBagLayout());
         JPanel container_l = new  JPanel (new GridBagLayout());
         JPanel survey_panel = new JPanel(new GridBagLayout());
-        
-        
-        
-        
+
         JPanel panel_thank_you = new JPanel();
         JPanel panel_survey_ = new JPanel();
         
@@ -118,6 +116,7 @@ public class Main extends JFrame implements ActionListener
        JMenuItem Loggout = new JMenuItem("Logout"); 
        JMenuItem comments = new JMenuItem("Comments");
        JMenuItem About = new JMenuItem("About");
+       JMenuItem Home = new JMenuItem("Home");
        
        JMenuItem change_pass = new JMenuItem("Password Change");
        JMenuItem Edit_profile = new JMenuItem("Edit Profile");
@@ -130,8 +129,6 @@ public class Main extends JFrame implements ActionListener
        public String String_Array_Sample = "../common/build/resources/main/comments.csv";
           
 
-                
-        
  //Methods      
 //Getting the basic information. 
 public void user_start(){
@@ -224,6 +221,7 @@ public void legislator_start(){
       constraints.gridx = 0;
       constraints.gridy = 3;
       panel_l.add(back_btn, constraints);
+      Submit_l.addActionListener(this);
       back_btn.addActionListener(this);
       
       add(panel_l);
@@ -315,7 +313,9 @@ public void write(){
 }         
 //Button actions Performed 
 public void actionPerformed(ActionEvent e){
+    
           if(e.getSource() == Submit_l){
+           System.out.print("Pressed");
           char[] legislator_password = keycode.getPassword();
           char[] c_pass = {'1','2','3','4'};
           
@@ -323,6 +323,11 @@ public void actionPerformed(ActionEvent e){
           if(Arrays.equals(legislator_password,c_pass))
           {
               RunSurveydata_();
+              frames.add(frame3);
+              frames.add(frame8);
+              frames.add(frame9);
+              frames.add(frame10);
+              
               frame2.setVisible(false);       
           }else{
               System.out.print("Fail!");     
@@ -330,10 +335,7 @@ public void actionPerformed(ActionEvent e){
           }
           if(e.getSource() == back_btn){
               frame2.setVisible(false);
-              user_start();
-          
-          
-          
+              user_start();       
           }
           if(e.getSource() == Submit){
               citizen = FullName.getText();
@@ -351,10 +353,6 @@ public void actionPerformed(ActionEvent e){
           thank_you_page();
           write();
           frame4.setVisible(false);
-          
-          
-          
-          
           }
           
           if(e.getSource() == Loggout){
@@ -370,9 +368,28 @@ public void actionPerformed(ActionEvent e){
           if(e.getSource() == Submit_legislator){
               legislator_start();
               frame.setVisible(false);
-              
+
+          }
+          if(e.getSource() == About){
+              about_page();
+              frame6.setVisible(false);
+          }
+          if(e.getSource() == change_pass){
+              change_password_page();
+              frame6.setVisible(false);
           
           }
+          if(e.getSource() == Edit_profile){
+              edit_profile();
+              frame6.setVisible(false);
+              
+          }
+          if(e.getSource() == Home){
+              legislator_start();
+              
+              
+          }
+          
       }
 //List of comments 
 public JPanel listofComments(){
@@ -509,16 +526,26 @@ private void thank_you_page()   {
 //Run Survey Data, running to get all the input from the CVS This brings to the menu of the homescreen
 private void RunSurveydata_(){
     //Menu 
- 
+       About.addActionListener(this);
        comments.addActionListener(this);
        Loggout.addActionListener(this);
+       Edit_profile.addActionListener(this);
+       change_pass.addActionListener(this);
+       Home.addActionListener(this);
        
+      
        
        menuBar.add(menu);
        menuBar.add(Profile_menu);
        menuBar.add(Comment_menu);
        
+     
+       menu.add(Home);
+      //I have to fix the frames.
+       for(int i = 0; i <= frames.size(); i++){
+           
        
+       }
        Comment_menu.add(comments);
        Profile_menu.add(Edit_profile);
        Profile_menu.add(change_pass);
@@ -527,12 +554,16 @@ private void RunSurveydata_(){
        menu.add(Loggout);
        
        
+       
+       
        frame6.setJMenuBar(menuBar);
        
        
-    
-    
-    
+       
+       
+       
+       
+
     //We are going to customize the homepage 
     panel_survey_= ListOfData();
     JPanel Main = new JPanel();
@@ -549,12 +580,33 @@ private void RunSurveydata_(){
     
     frame6.setLocationRelativeTo(null);
     }
-public void TestCase(
-        String Comment, 
-        String URL, 
-        String Data, 
-        String User_Data,
-        String Fields){
+//About page 
+public void about_page(){
+    frame8.setJMenuBar(menuBar);
+    
+    frame8.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    frame8.setSize(1024,1024);
+    frame8.setVisible(true);
+}
+//edit page 
+public void edit_profile(){
+    frame9.setJMenuBar(menuBar);
+    
+    frame9.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    frame9.setSize(1024,1024);
+    frame9.setVisible(true);
+}
+//password change
+public void change_password_page(){
+    frame10.setJMenuBar(menuBar);
+   
+    frame10.setDefaultCloseOperation(EXIT_ON_CLOSE);
+    frame10.setSize(1024,1024);
+    frame10.setVisible(true);
+}
+
+
+public void TestCase(String Comment, String URL, String Data,  String User_Data,String Fields){
     int counter = 5;
     switch(counter) {
         case 1:
@@ -606,7 +658,7 @@ public void TestCase(
         
      Main test = new Main();
      test.legislator_start();
-     //test.user_start();
+    // test.user_start();
      //test.start_comment_section();
     }
 
