@@ -35,9 +35,9 @@ public class Main extends JFrame implements ActionListener
         ArrayList<String> citizendata = new ArrayList<String>(4);
         ArrayList<JFrame> frames = new ArrayList<JFrame>(4);
         
-        
-       
-        
+        //Password for legislator 
+        char[] c_pass = {'1','2','3','4'};
+
         //JLabels
         JLabel Title = new JLabel("Hospital General System");
         JLabel FullName_l = new JLabel("Enter your name");
@@ -67,7 +67,6 @@ public class Main extends JFrame implements ActionListener
         
         JFrame frame6 = new JFrame("Survey Data from the Public");
         JFrame frame8 = new JFrame("About HGS");
-        JFrame frame9 = new JFrame("Edit Profile");
         JFrame frame10 = new JFrame("Change Password");
         
         
@@ -119,7 +118,7 @@ public class Main extends JFrame implements ActionListener
        JMenuItem Home = new JMenuItem("Home");
        
        JMenuItem change_pass = new JMenuItem("Password Change");
-       JMenuItem Edit_profile = new JMenuItem("Edit Profile");
+       
        
        
        //Getting the time now 
@@ -317,7 +316,7 @@ public void actionPerformed(ActionEvent e){
           if(e.getSource() == Submit_l){
            System.out.print("Pressed");
           char[] legislator_password = keycode.getPassword();
-          char[] c_pass = {'1','2','3','4'};
+          
           
           
           if(Arrays.equals(legislator_password,c_pass))
@@ -325,7 +324,7 @@ public void actionPerformed(ActionEvent e){
               RunSurveydata_();
               frames.add(frame3);
               frames.add(frame8);
-              frames.add(frame9);
+              
               frames.add(frame10);
               
               frame2.setVisible(false);       
@@ -379,11 +378,7 @@ public void actionPerformed(ActionEvent e){
               frame6.setVisible(false);
           
           }
-          if(e.getSource() == Edit_profile){
-              edit_profile();
-              frame6.setVisible(false);
-              
-          }
+          
           if(e.getSource() == Home){
               legislator_start();
               
@@ -523,47 +518,61 @@ private void thank_you_page()   {
     }
 
 
-//Run Survey Data, running to get all the input from the CVS This brings to the menu of the homescreen
-private void RunSurveydata_(){
+//Navigation bar 
+public void nav(){
+    System.out.println(frames);
     //Menu 
        About.addActionListener(this);
        comments.addActionListener(this);
        Loggout.addActionListener(this);
-       Edit_profile.addActionListener(this);
+       
        change_pass.addActionListener(this);
        Home.addActionListener(this);
        
-      
-       
+      System.out.print(frame6.isShowing());
+       if(frame6.isShowing()){
+           
        menuBar.add(menu);
        menuBar.add(Profile_menu);
        menuBar.add(Comment_menu);
        
-     
-       menu.add(Home);
       //I have to fix the frames.
-       for(int i = 0; i <= frames.size(); i++){
-           
+       
+       Comment_menu.add(comments);
+       
+       Profile_menu.add(change_pass);
+       
+       menu.add(About);
+       menu.add(Loggout);
        
        }
+       else{
+       menuBar.add(menu);
+       menuBar.add(Profile_menu);
+       menuBar.add(Comment_menu);
+       
+       menu.add(Home);
+       
+      //I have to fix the frames.
+       
        Comment_menu.add(comments);
-       Profile_menu.add(Edit_profile);
+      
        Profile_menu.add(change_pass);
        
        menu.add(About);
        menu.add(Loggout);
        
        
-       
-       
+       }
        frame6.setJMenuBar(menuBar);
-       
-       
-       
-       
-       
+      
        
 
+}
+
+//Run Survey Data, running to get all the input from the CVS This brings to the menu of the homescreen
+private void RunSurveydata_(){    
+    
     //We are going to customize the homepage 
     panel_survey_= ListOfData();
     JPanel Main = new JPanel();
@@ -577,32 +586,75 @@ private void RunSurveydata_(){
     frame6.setDefaultCloseOperation(EXIT_ON_CLOSE);
     
     frame6.setVisible(true);
+    nav();
     
     frame6.setLocationRelativeTo(null);
     }
 //About page 
 public void about_page(){
+    nav();
+    //Project description 
+    JLabel about_text = new JLabel("About me ");
+    //Text pane with text area
+    
+    JPanel textpane = new JPanel(new GridBagLayout());
+    GridBagConstraints constraints = new GridBagConstraints();
+    
+    
+    
+    constraints.insets = new Insets(10,10,10,10);
+    constraints.anchor = GridBagConstraints.WEST;
+    
+    constraints.gridx = 0;
+    constraints.gridy = 0;
+    textpane.add(about_text, constraints);
+    
+    constraints.gridx = 0;
+    constraints.gridy = 1;
+    JTextArea about_text_a = new JTextArea("This system aid you for health data collection 2018 ");
+    about_text_a.setEditable(false);
+    textpane.add(about_text_a, constraints);
+    
+    
+    frame8.add(textpane);
     frame8.setJMenuBar(menuBar);
     
     frame8.setDefaultCloseOperation(EXIT_ON_CLOSE);
     frame8.setSize(1024,1024);
     frame8.setVisible(true);
+    
+    frame8.setLocationRelativeTo(null);
 }
 //edit page 
-public void edit_profile(){
-    frame9.setJMenuBar(menuBar);
-    
-    frame9.setDefaultCloseOperation(EXIT_ON_CLOSE);
-    frame9.setSize(1024,1024);
-    frame9.setVisible(true);
-}
-//password change
+
 public void change_password_page(){
+    nav(); 
+    JPanel change_password_panel = new JPanel();
+    
+    JLabel change_password_l = new JLabel("Change Password");
+    JTextField change_password_f = new JTextField(30);
+    
+    GridBagConstraints constraints = new GridBagConstraints();
+    constraints.anchor = GridBagConstraints.WEST;
+    constraints.insets = new Insets(10,10,10,10);
+    
+    constraints.gridx = 0;
+    constraints.gridy = 0;
+    change_password_panel.add(change_password_l, constraints);
+    
+    constraints.gridx = 0;
+    constraints.gridy = 1;
+    change_password_panel.add(change_password_f, constraints);
+    
+    frame10.add(change_password_panel);
+    
+    
     frame10.setJMenuBar(menuBar);
-   
     frame10.setDefaultCloseOperation(EXIT_ON_CLOSE);
     frame10.setSize(1024,1024);
     frame10.setVisible(true);
+   
+    frame10.setLocationRelativeTo(null);
 }
 
 
@@ -657,8 +709,10 @@ public void TestCase(String Comment, String URL, String Data,  String User_Data,
     {
         
      Main test = new Main();
-     test.legislator_start();
-    // test.user_start();
+     
+     test.RunSurveydata_();
+     
+    //test.user_start();
      //test.start_comment_section();
     }
 
