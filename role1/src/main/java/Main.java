@@ -9,7 +9,7 @@ import java.io.*;
 import java.util.*;
 import edu.uconn.cse2102.project.common.Hospital;
 import edu.uconn.cse2102.project.common.Comments;
-
+import java.lang.ArrayIndexOutOfBoundsException;
 
 import com.opencsv.CSVWriter;
 
@@ -57,20 +57,13 @@ public class Main extends JFrame implements ActionListener
         
         //Frames
         JFrame frame = new JFrame("Hospital General System ");
-        JFrame frame2 = new JFrame("(HGI ADMIN) Welcome Back legislator! ");
-      
+        JFrame frame2 = new JFrame("(HGI ADMIN) Welcome Back legislator! ");   
         JFrame frame3 = new JFrame("Comment Section");
         JFrame frame4 = new JFrame("Make a comment");
         JFrame frame5 = new JFrame("Thank you page");
-        
-        
-        
         JFrame frame6 = new JFrame("Survey Data from the Public");
         JFrame frame8 = new JFrame("About HGS");
         JFrame frame10 = new JFrame("Change Password");
-        
-        
-        
         
         //Survey frame
         JFrame frame7 = new JFrame("Taking the survey");
@@ -126,6 +119,24 @@ public class Main extends JFrame implements ActionListener
        LocalDateTime now = LocalDateTime.now();  
        
        public String String_Array_Sample = "../common/build/resources/main/comments.csv";
+       
+       //To have all the field in array to check if any is empty
+       ArrayList fields  = new ArrayList();
+       //To see if the user data correlates with specific fields 
+       Map<String,ArrayList> user_data_map = new HashMap< String,ArrayList>();
+       
+       //List of all Names
+       ArrayList<String> names = new ArrayList();
+       
+ 
+       //List of all Social Security
+       ArrayList SSS = new ArrayList();
+       //List of all made comment by user.
+       ArrayList users_comments = new ArrayList();
+       
+       
+       //File headers 
+       String[] FILE_HEADER = {"ID","Full_Name","SS","Comment","Time"};
           
 
  //Methods      
@@ -296,7 +307,7 @@ public void write(){
                 String COMMA_DELIMITER = ",";
             
             String NEW_LINE_SEPARATOR = "\n";
-            String[] FILE_HEADER = {"ID","Full_Name","SS","Comment","Time"};
+            
             csvWriter.writeNext(FILE_HEADER);
             csvWriter.writeNext(new String[]{"test2","test2","test2","test2","test2"});
             
@@ -316,6 +327,8 @@ public void actionPerformed(ActionEvent e){
           if(e.getSource() == Submit_l){
            System.out.print("Pressed");
           char[] legislator_password = keycode.getPassword();
+          fields.add(this.keycode);
+          
           
           
           
@@ -339,6 +352,16 @@ public void actionPerformed(ActionEvent e){
           if(e.getSource() == Submit){
               citizen = FullName.getText();
               citizen_ss = Social_Security.getText();
+              fields.add(FullName);
+              fields.add(Social_Security);
+              //Adding name to the user data 
+              names.add(citizen);
+              user_data_map.put("Full Name",names);
+              //Adding ss to the user data 
+              SSS.add(citizen_ss);
+              user_data_map.put("SS",SSS);
+              
+             
                 
               System.out.print("Success!");
              
@@ -348,6 +371,10 @@ public void actionPerformed(ActionEvent e){
           }
           if(e.getSource() == Submit_make_comment){   
           System.out.print("Success");
+          fields.add(citizen_comment);
+          //Comments are added to the user data 
+          users_comments.add(citizen_comment);
+          user_data_map.put("Comments", users_comments);
           
           thank_you_page();
           write();
@@ -658,60 +685,93 @@ public void change_password_page(){
 }
 
 
-public void TestCase(String Comment, String URL, String Data,  String User_Data,String Fields){
+public void TestCase(String Comment, String URL, String[] Data,  Map<String, ArrayList>User_Data,ArrayList Fields) throws IOException{
     int counter = 5;
     switch(counter) {
         case 1:
-            if (Comment.length() > 150 ){
+            if (Comment.length() > 128 ){
                 System.out.print("Failure" + counter + "Check your system");
             
             }
-        System.out.print("Case 1: Success");
+        System.out.print("Case 1 For length of comment: Success");
         case 2:
-            if(String_Array_Sample.isEmpty()){
-                System.out.print("Failure" + counter + "Check your system");
+            try {
+                BufferedReader br = new BufferedReader(new FileReader(URL));
+                if(br.readLine() == null){
+                    System.out.print("Failure" + counter + "Check your File Index");
+            }
+            }catch (FileNotFoundException e){
+                System.out.println(e);
             
             }
-       System.out.print("Case 2: Success");
+            
+       System.out.print("Case 2 CSV correct: Success" );
         case 3:
-            if(Data.isEmpty()){
+            try {
+                for(int i = 0; i < 5; i++){
+                 if(Data.length == 5){
+                    System.out.print("Case 3 Data Arrays: Success");   
+                 }}   
+                    
+                }
+              
+            catch (ArrayIndexOutOfBoundsException e){
                 System.out.print("Failure" + counter + "Check your system");
             
             }
-        System.out.print("Case 3: Success");    
+                   
         case 4:
-            if(User_Data.isEmpty()){
-                System.out.print("Failure" + counter + "Check your system");
+        try {
+               for(ArrayList e: User_Data.values()){
+                   if(e.equals(e.size())){
+                    System.out.print("Case 4 User Data Arrays: Success");
+                   }
+                      
+                   
+               }
+              
+            
+                   
+           
+        }    
+        catch (ArrayIndexOutOfBoundsException e){
+             System.out.print("Case 4 User Data Arrays: Failure" + e);
             
             }
-        System.out.print("Case 4: Success");   
+            
+        
         case 5:
-            if (Fields.isEmpty()){
+            try {
+                for(Object e: Fields){
+                    if (e != null){
+                        System.out.print("Case 5 All Fields are not null: Success");   
+                    }
+               }
+            
+            }catch (NullPointerException e){
                 System.out.print("Failure" + counter + "Check your system");
             
             }
-        System.out.print("Case 5: Success");   
+            
+        
         default:
             System.out.print("All success!");
             
-    
     }
+   
     
-    
-    System.out.print("Failure" + counter + "Check your system");
     
 }
 
 
-
-
-    public static void main(String[] args)
+    public static void main(String[] args) throws IOException
     {
         
      Main test = new Main();
      
      test.RunSurveydata_();
      
+     test.TestCase(test.citizen_comment, test.String_Array_Sample, test.FILE_HEADER, test.user_data_map, test.fields);
     //test.user_start();
      //test.start_comment_section();
     }
