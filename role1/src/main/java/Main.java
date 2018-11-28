@@ -87,8 +87,11 @@ public class Main extends JFrame implements ActionListener
         JButton Submit_make_comment = new JButton("Confirm");
         JButton Submit_survey = new JButton("Submit");
         
+        
         JButton Submit_legislator = new JButton("Are you a legislator");
         JButton back_btn = new JButton("Back");
+        
+        JButton change_password_b = new JButton("change");
         
         //Buttons for the Legislator 
         JButton Comment_Section_btn = new JButton("Comments");
@@ -102,7 +105,7 @@ public class Main extends JFrame implements ActionListener
        JMenuBar menuBar = new JMenuBar();
        JMenu menu = new JMenu("HGI");
        JMenu Comment_menu = new JMenu("Comments");
-       JMenu Profile_menu = new JMenu("Profile");
+       
        
        
        JMenuItem Loggout = new JMenuItem("Logout"); 
@@ -110,7 +113,7 @@ public class Main extends JFrame implements ActionListener
        JMenuItem About = new JMenuItem("About");
        JMenuItem Home = new JMenuItem("Home");
        
-       JMenuItem change_pass = new JMenuItem("Password Change");
+       
        
        
        
@@ -352,6 +355,12 @@ public void actionPerformed(ActionEvent e){
           if(e.getSource() == Submit){
               citizen = FullName.getText();
               citizen_ss = Social_Security.getText();
+              
+              if(citizen.isEmpty() || citizen_ss.isEmpty()){
+              JOptionPane.showMessageDialog(frame, "One or more fields are empty");
+              
+              }
+              else{
               fields.add(FullName);
               fields.add(Social_Security);
               //Adding name to the user data 
@@ -368,11 +377,16 @@ public void actionPerformed(ActionEvent e){
               make_comment_section();
               
               frame.setVisible(false);
+              }
           }
           if(e.getSource() == Submit_make_comment){ 
               
           System.out.print("Success");
+          
           citizen_comment = textbox_c.getText();
+          if(citizen_comment.isEmpty()){
+          JOptionPane.showMessageDialog(frame4, "One or more fields are empty");
+          }else{
           fields.add(citizen_comment);
           
           //Comments are added to the user data 
@@ -382,6 +396,7 @@ public void actionPerformed(ActionEvent e){
           thank_you_page();
           write();
           frame4.setVisible(false);
+          }
           }
           
           if(e.getSource() == Loggout){
@@ -403,11 +418,8 @@ public void actionPerformed(ActionEvent e){
               about_page();
               frame6.setVisible(false);
           }
-          if(e.getSource() == change_pass){
-              change_password_page();
-              frame6.setVisible(false);
           
-          }
+          
           
           if(e.getSource() == Home){
               legislator_start();
@@ -562,21 +574,21 @@ public void nav(){
        comments.addActionListener(this);
        Loggout.addActionListener(this);
        
-       change_pass.addActionListener(this);
+       
        Home.addActionListener(this);
        
       System.out.print(frame6.isShowing());
        if(frame6.isShowing()){
            
        menuBar.add(menu);
-       menuBar.add(Profile_menu);
+      
        menuBar.add(Comment_menu);
        
       //I have to fix the frames.
        
        Comment_menu.add(comments);
        
-       Profile_menu.add(change_pass);
+       
        
        menu.add(About);
        menu.add(Loggout);
@@ -584,7 +596,7 @@ public void nav(){
        }
        else{
        menuBar.add(menu);
-       menuBar.add(Profile_menu);
+       
        menuBar.add(Comment_menu);
        
        menu.add(Home);
@@ -593,7 +605,7 @@ public void nav(){
        
        Comment_menu.add(comments);
       
-       Profile_menu.add(change_pass);
+       
        
        menu.add(About);
        menu.add(Loggout);
@@ -681,6 +693,12 @@ public void change_password_page(){
     constraints.gridx = 0;
     constraints.gridy = 1;
     change_password_panel.add(change_password_f, constraints);
+    
+    constraints.gridx = 0;
+    constraints.gridy = 2;
+    change_password_panel.add(change_password_b, constraints);
+    
+    change_password_b.addActionListener(this);
     
     frame10.add(change_password_panel);
     
