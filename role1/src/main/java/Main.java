@@ -121,18 +121,18 @@ public class Main extends JFrame implements ActionListener
        public String String_Array_Sample = "../common/build/resources/main/comments.csv";
        
        //To have all the field in array to check if any is empty
-       ArrayList fields  = new ArrayList();
+       ArrayList<Object> fields  = new ArrayList<Object>();
        //To see if the user data correlates with specific fields 
        Map<String,ArrayList> user_data_map = new HashMap< String,ArrayList>();
        
        //List of all Names
-       ArrayList<String> names = new ArrayList();
+       ArrayList<String> names = new ArrayList<String>();
        
  
        //List of all Social Security
-       ArrayList SSS = new ArrayList();
+       ArrayList<String> SSS = new ArrayList<String>();
        //List of all made comment by user.
-       ArrayList users_comments = new ArrayList();
+       ArrayList<String> users_comments = new ArrayList<String>();
        
        
        //File headers 
@@ -309,7 +309,7 @@ public void write(){
             String NEW_LINE_SEPARATOR = "\n";
             
             csvWriter.writeNext(FILE_HEADER);
-            csvWriter.writeNext(new String[]{"test2","test2","test2","test2","test2"});
+            csvWriter.writeNext(new String[]{"0000",citizen,citizen_ss,citizen_comment,"0000"});
             
             
             } catch (IOException ex) {
@@ -369,9 +369,12 @@ public void actionPerformed(ActionEvent e){
               
               frame.setVisible(false);
           }
-          if(e.getSource() == Submit_make_comment){   
+          if(e.getSource() == Submit_make_comment){ 
+              
           System.out.print("Success");
+          citizen_comment = textbox_c.getText();
           fields.add(citizen_comment);
+          
           //Comments are added to the user data 
           users_comments.add(citizen_comment);
           user_data_map.put("Comments", users_comments);
@@ -542,6 +545,12 @@ private void thank_you_page()   {
        citizendata.add("test");
        System.out.print(citizendata);
 
+            try {
+                TestCase(citizen_comment, String_Array_Sample, FILE_HEADER, user_data_map,fields);
+            } catch (IOException ex) {
+                Logger.getLogger(Main.class.getName()).log(Level.SEVERE, null, ex);
+            }
+       
     }
 
 
@@ -685,83 +694,64 @@ public void change_password_page(){
 }
 
 
-public void TestCase(String Comment, String URL, String[] Data,  Map<String, ArrayList>User_Data,ArrayList Fields) throws IOException{
-    int counter = 5;
+public void TestCase(String Comment, String URL, String[] Data,  Map<String, ArrayList>User_Data, ArrayList Fields) throws IOException{
+    
+    int counter = 1;
+    while (counter <= 5){
     switch(counter) {
         case 1:
-            if (Comment.length() > 128 ){
-                System.out.print("Failure" + counter + "Check your system");
-            
-            }
-        System.out.print("Case 1 For length of comment: Success");
+            if(Comment.length() > 128){System.out.println("Failure" + counter + "Check your System"); counter = counter + 1; break;}
+            System.out.println("CASE 1: SUCCESS");
+            counter = counter + 1;
+            break;
         case 2:
-            try {
-                BufferedReader br = new BufferedReader(new FileReader(URL));
-                if(br.readLine() == null){
-                    System.out.print("Failure" + counter + "Check your File Index");
-            }
-            }catch (FileNotFoundException e){
-                System.out.println(e);
-            
+            try{
+            BufferedReader br = new BufferedReader(new FileReader(URL));
+            if(br.readLine() == null){System.out.println("Failure " + counter + "Check your System"); counter = counter + 1; break;}
+            }catch(NullPointerException e){
+            System.out.println("Case 2: " + e);
             }
             
-       System.out.print("Case 2 CSV correct: Success" );
+    
+            counter = counter + 1;
+            System.out.print("CASE 2:  CSV correct: Success" );
+            break;
         case 3:
-            try {
-                for(int i = 0; i < 5; i++){
-                 if(Data.length == 5){
-                    System.out.print("Case 3 Data Arrays: Success");   
-                 }}   
-                    
-                }
-              
-            catch (ArrayIndexOutOfBoundsException e){
-                System.out.print("Failure" + counter + "Check your system");
-            
-            }
-                   
+             for(int i = 0; i < 5; i++){
+                 if(Data.length != 5){System.out.println("Failure" + counter + "Check your system");counter = counter + 1;break;}} 
+             System.out.println("CASE 3: Data length: Success");
+            counter = counter + 1;
+            break;
         case 4:
-        try {
-               for(ArrayList e: User_Data.values()){
+             for(ArrayList e: User_Data.values()){
                    if(e.equals(e.size())){
-                    System.out.print("Case 4 User Data Arrays: Success");
-                   }
-                      
-                   
-               }
-              
-            
-                   
-           
-        }    
-        catch (ArrayIndexOutOfBoundsException e){
-             System.out.print("Case 4 User Data Arrays: Failure" + e);
-            
-            }
-            
-        
+                       System.out.println("Case 4 User Data Arrays: Failure" );
+                       counter = counter + 1;
+                       break;}}
+              System.out.println("Case 4 User Data Arrays: Success");
+              counter = counter + 1;
+            break;
         case 5:
-            try {
-                for(Object e: Fields){
-                    if (e != null){
-                        System.out.print("Case 5 All Fields are not null: Success");   
-                    }
-               }
-            
-            }catch (NullPointerException e){
-                System.out.print("Failure" + counter + "Check your system");
-            
+            for(Object e: Fields){
+                if(e == null || e.equals(""))
+            { 
+                System.out.println("CASE 5: Empty Fields: NULL"); 
+                counter = counter + 1; 
+                break;
             }
-            
-        
+            }
+            counter = counter + 1;
+            System.out.println("Case 5: Null Fields: Success");
+            break;
         default:
-            System.out.print("All success!");
-            
-    }
+            System.out.println("Default case");
+            break;
    
-    
-    
+    }
+    }
+
 }
+    
 
 
     public static void main(String[] args) throws IOException
@@ -769,11 +759,11 @@ public void TestCase(String Comment, String URL, String[] Data,  Map<String, Arr
         
      Main test = new Main();
      
-     test.RunSurveydata_();
+     //test.RunSurveydata_();
      
-     test.TestCase(test.citizen_comment, test.String_Array_Sample, test.FILE_HEADER, test.user_data_map, test.fields);
-    //test.user_start();
-     //test.start_comment_section();
+    
+    test.user_start();
+   
     }
 
 
