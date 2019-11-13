@@ -1,0 +1,4 @@
+In order to run program
+You need to install the latest version of gradle 
+cd to role1
+run "gradle run" to open program 
